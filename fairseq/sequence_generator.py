@@ -1948,13 +1948,13 @@ class SequenceGenerator(nn.Module):
                     if len(img_token_size) == 5:  # few-shot setting, [B, K-shot, D(3, 244, 244)]
                         bsz_val = img_token_size[0]
                         k_shot_val = img_token_size[1]
-                        img_tokens = sample['net_input']['image'].cuda().view(-1, *img_token_size[2:])
+                        img_tokens = sample['net_input']['image'].view(-1, *img_token_size[2:])
                     else:
                         bsz_val = img_token_size[0]
                         k_shot_val = 1
-                        img_tokens = sample['net_input']['image'].cuda()
+                        img_tokens = sample['net_input']['image']
 
-                    image_attention_masks = sample['net_input']['image_attention_masks'] .cuda()
+                    image_attention_masks = sample['net_input']['image_attention_masks']
                     multimodal_infer = True
                     img_features = self.model.models[0].get_image_representation(img_tokens, image_attention_masks)
                     first_src_tokens = sample['net_input']['src_tokens'].unsqueeze(1).repeat(1, beam_size, 1).view(
@@ -1963,7 +1963,7 @@ class SequenceGenerator(nn.Module):
                     first_img_features = img_features.view(bsz, -1, img_feature_dim).unsqueeze(1).repeat(1, beam_size,
                                                                                                          1, 1).view(-1,
                                                                                                                     img_feature_dim)
-                    img_gpt_input_mask = sample['net_input']['img_gpt_input_mask'].cuda().bool()
+                    img_gpt_input_mask = sample['net_input']['img_gpt_input_mask'].bool()
                     first_gpt_input_mask = img_gpt_input_mask.unsqueeze(1).repeat(1, beam_size, 1).view(bsz * beam_size,
                                                                                                         -1)
                     # first_chunk_tokens = sample['net_input']['chunk_tokens'].cuda()
@@ -1971,7 +1971,7 @@ class SequenceGenerator(nn.Module):
                     #                                                                                   -1)
                     first_chunk_tokens = None
 
-                    first_segment_tokens = sample['net_input']['segment_tokens'].cuda()
+                    first_segment_tokens = sample['net_input']['segment_tokens']
                     first_segment_tokens = first_segment_tokens.unsqueeze(1).repeat(1, beam_size, 1).view(
                         bsz * beam_size, -1)
 
